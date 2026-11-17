@@ -19,12 +19,26 @@ PROOF_EXT = {'pdf','jpg','jpeg','png','webp'}
 PLANS = {1: {'name':'1 Month','days':30,'amount':33300}, 3:{'name':'3 Months','days':90,'amount':66600}, 6:{'name':'6 Months','days':180,'amount':99900}, 12:{'name':'12 Months','days':365,'amount':189900}}
 
 
+
 def db():
     if 'db' not in g:
-        g.db = pymysql.connect(host=Config.DB_HOST, port=Config.DB_PORT, user=Config.DB_USER,
-            password=Config.DB_PASSWORD, database=Config.DB_NAME, charset='utf8mb4',
-            cursorclass=pymysql.cursors.DictCursor, autocommit=True)
+        g.db = pymysql.connect(
+            host=Config.DB_HOST,
+            port=Config.DB_PORT,
+            user=Config.DB_USER,
+            password=Config.DB_PASSWORD,
+            database=Config.DB_NAME,
+            charset='utf8mb4',
+            cursorclass=pymysql.cursors.DictCursor,
+            autocommit=True,
+
+            # Secure connection to TiDB Cloud
+            ssl_ca='/etc/ssl/certs/ca-certificates.crt',
+            ssl_verify_cert=True,
+            ssl_verify_identity=True
+        )
     return g.db
+
 
 @app.teardown_appcontext
 def close_db(_):
