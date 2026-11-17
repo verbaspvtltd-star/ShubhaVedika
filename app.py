@@ -5,7 +5,7 @@ import pymysql, pymysql.cursors
 from flask import Flask, g, jsonify, request, render_template, session, redirect, send_file, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-from ShubhaVedika.config import Config
+from config import Config
 
 app = Flask(__name__)
 app.config.from_object(Config)
