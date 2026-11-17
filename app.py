@@ -39,18 +39,28 @@ PLANS = {
 
 def db():
     if 'db' not in g:
-        g.db = pymysql.connect(
-            host=Config.DB_HOST,
-            port=Config.DB_PORT,
-            user=Config.DB_USER,
-            password=Config.DB_PASSWORD,
-            database=Config.DB_NAME,
-            charset='utf8mb4',
-            cursorclass=pymysql.cursors.DictCursor,
-            autocommit=True
-        )
-    return g.db
+        db_config = {
+            'host': Config.DB_HOST,
+            'port': Config.DB_PORT,
+            'user': Config.DB_USER,
+            'password': Config.DB_PASSWORD,
+            'database': Config.DB_NAME,
+            'charset': 'utf8mb4',
+            'cursorclass': pymysql.cursors.DictCursor,
+            'autocommit': True
+        }
 
+        # Enable SSL only for cloud databases
+        if Config.DB_HOST not in ('127.0.0.1', 'localhost'):
+            db_config.update({
+                'ssl_ca': certifi.where(),
+                'ssl_verify_cert': True,
+                'ssl_verify_identity': True
+            })
+
+        g.db = pymysql.connect(**db_config)
+
+    return g.db
 
 @app.teardown_appcontext
 def close_db(_):
