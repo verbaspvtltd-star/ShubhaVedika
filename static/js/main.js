@@ -1,3 +1,4 @@
+
 /* ShubhaVedika front-end */
 const lang = () => localStorage.getItem("lang") || "en";
 const t = k => (I18N[lang()][k] ?? I18N.en[k] ?? k);
@@ -179,6 +180,7 @@ async function startVendorPayment(vendorId,token,months,prefill={}){
     handler:async response=>{try{await post("/api/payment/verify",{vendor_id:vendorId,vendor_token:token,razorpay_order_id:response.razorpay_order_id,razorpay_payment_id:response.razorpay_payment_id,razorpay_signature:response.razorpay_signature});location.href="/vendor-verification";}catch(err){toast(err.message,true);}},
     modal:{ondismiss:()=>toast("Payment was not completed. You can try again from your vendor dashboard.",true)}});rz.open();
 }
+
 async function initRegister() {
   const meta=await loadMeta();
   $("#rCat").innerHTML=meta.categories.map(c=>`<option value="${c.id}">${esc(pick(c,"name"))}</option>`).join("");
@@ -198,6 +200,7 @@ async function initRegister() {
     finally{if(btn){btn.disabled=false;btn.textContent="Continue to secure payment →";}}
   };
 }
+
 async function initVendorVerification(){
   const token=localStorage.getItem("sv_vendor_token");
   if(!token){location.href="/vendor-login";return;}
@@ -219,6 +222,7 @@ async function initVendorVerification(){
     finally{if(btn){btn.disabled=false;btn.textContent="Submit document securely →";}}
   };
 }
+
 async function initVendorAccountSetup(){
   const token=localStorage.getItem("sv_vendor_token");
   if(!token){location.href="/vendor-login";return;}
@@ -234,6 +238,7 @@ async function initVendorAccountSetup(){
     catch(err){toast(err.message,true);btn.disabled=false;btn.textContent="Save password & open dashboard →";}
   };
 }
+
 async function initVendorLogin(){
   $("#vendorLoginForm").onsubmit=async e=>{
     e.preventDefault();const f=Object.fromEntries(new FormData(e.target));
@@ -242,6 +247,7 @@ async function initVendorLogin(){
     catch(err){toast(err.message,true);btn.disabled=false;btn.textContent="Login securely →";}
   };
 }
+
 async function initVendorDashboard(){
   const token=localStorage.getItem("sv_vendor_token"),box=$("#vendorDash");
   if(!token){location.href="/vendor-login";return;}
@@ -269,7 +275,7 @@ async function initVendorDashboard(){
         </div>
         <p class="vendor-enquiry-message"><small>${telugu ? "సందేశం" : "Message"}</small><span>${esc(item.message || "—")}</span></p>
       </article>`).join("") : `<div class="vendor-enquiry-empty"><strong>${emptyTitle}</strong><p>${emptyText}</p></div>`;
-    box.innerHTML=`<h2>${esc(v.name_en)}</h2><div class="dash-grid"><div><small>Listing status</small><b>${esc(v.status)}</b></div><div><small>Subscription</small><b>${esc(v.plan_status)}</b></div><div><small>Plan valid until</small><b>${expiry?expiry.toLocaleDateString("en-IN"):"Not active"}</b></div><div><small>Days remaining</small><b>${days}</b></div><div><small>Enquiry/contact requests</small><b>${d.enquiries}</b></div><div><small>Authenticity verification</small><b>${esc(v.verification_status)}</b></div></div><p class="muted">Payment activates your listing plan. The admin team separately checks your business proof before marking your business as verified.</p><section class="vendor-enquiries-section"><div class="vendor-enquiries-title"><div><h3>${enquiryTitle}</h3><p>${telugu ? "కస్టమర్లు పంపిన వివరాలు" : "Customer contact requests and messages"}</p></div><span class="vendor-enquiry-count">${enquiryItems.length}</span></div><div class="vendor-enquiry-list">${enquiryCards}</div></section><div class="renew-row"><select id="renewPlan"><option value="1">1 Month · ₹333</option><option value="3">3 Months · ₹666</option><option value="6">6 Months · ₹999</option><option value="12">12 Months · ₹1,899</option></select><button class="btn" id="renewBtn">Pay / renew plan</button></div><button class="btn ghost" id="vendorLogout">Sign out on this device</button>`;
+    box.innerHTML=`<h2>${esc(v.name_en)}</h2><div class="dash-grid"><div><small>Listing status</small><b>${esc(v.status)}</b></div><div><small>Subscription</small><b>${esc(v.plan_status)}</b></div><div><small>Plan valid until</small><b>${expiry?expiry.toLocaleDateString("en-IN"):"Not active"}</b></div><div><small>Days remaining</small><b>${days}</b></div><div><small>Enquiry/contact requests</small><b>${d.enquiries}</b></div><div><small>Authenticity verification</small><b>${esc(v.verification_status)}</b></div></div><p class="muted">Payment activates your listing plan. The admin team separately checks your business proof before marking your business as verified.</p><section class="vendor-enquiries-section"><div class="vendor-enquiries-title"><div><h3>${enquiryTitle}</h3><p>${telugu ? "కస్టమర్లు పంపిన వివరాలు" : "Customer contact requests and messages"}</p></div><span class="vendor-enquiry-count">${enquiryItems.length}</span></div><div class="vendor-enquiry-list">${enquiryCards}</div></section><div class="renew-row"><select id="renewPlan"><option value="1">1 Month · ₹392.94 (incl. 18% GST)</option><option value="3">3 Months · ₹785.88 (incl. 18% GST)</option><option value="6">6 Months · ₹1,178.82 (incl. 18% GST)</option><option value="12">12 Months · ₹2,240.82 (incl. 18% GST)</option></select><button class="btn" id="renewBtn">Pay / renew plan</button></div><button class="btn ghost" id="vendorLogout">Sign out on this device</button>`;
     $("#renewBtn").onclick=async()=>{try{await startVendorPayment(localStorage.getItem("sv_vendor_id"),token,$("#renewPlan").value,{name:v.name_en,email:v.email||"",contact:v.phone||""});}catch(err){toast(err.message,true);}};
     $("#vendorLogout").onclick=()=>{localStorage.removeItem("sv_vendor_token");localStorage.removeItem("sv_vendor_id");location.href="/";};
   }catch(e){box.innerHTML=`<p>${esc(e.message)}</p>`;}

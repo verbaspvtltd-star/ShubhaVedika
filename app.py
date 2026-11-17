@@ -16,7 +16,22 @@ os.makedirs(PUBLIC_UPLOAD_DIR, exist_ok=True)
 os.makedirs(PRIVATE_UPLOAD_DIR, exist_ok=True)
 IMG_EXT = {'jpg','jpeg','png','webp'}
 PROOF_EXT = {'pdf','jpg','jpeg','png','webp'}
-PLANS = {1: {'name':'1 Month','days':30,'amount':33300}, 3:{'name':'3 Months','days':90,'amount':66600}, 6:{'name':'6 Months','days':180,'amount':99900}, 12:{'name':'12 Months','days':365,'amount':189900}}
+# Subscription prices are stored in paise. GST is calculated server-side at 18%.
+PLAN_BASE_AMOUNTS = {1: 33300, 3: 66600, 6: 99900, 12: 189900}
+PLANS = {
+    months: {
+        'name': name, 'days': days,
+        'base_amount': base_amount,
+        'gst_amount': round(base_amount * 18 / 100),
+        'amount': base_amount + round(base_amount * 18 / 100)
+    }
+    for months, name, days, base_amount in [
+        (1, '1 Month', 30, PLAN_BASE_AMOUNTS[1]),
+        (3, '3 Months', 90, PLAN_BASE_AMOUNTS[3]),
+        (6, '6 Months', 180, PLAN_BASE_AMOUNTS[6]),
+        (12, '12 Months', 365, PLAN_BASE_AMOUNTS[12])
+    ]
+}
 
 
 
@@ -200,18 +215,36 @@ def vendor_register():
     vals=vendor_values(f,save_public_image(request.files.get('image')))
     vid=execute("""INSERT INTO vendors (name_en,name_te,category_id,city_id,locality,description_en,description_te,price_from,price_unit,phone,whatsapp,email,image,status,plan_status,verification_status,access_token_hash)
       VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,'pending','pending','pending',%s)""", vals[:13]+(token_hash,))
-    return jsonify(ok=True,vendor_id=vid,vendor_token=token,plan_months=months,amount=PLANS[months]['amount'],plan_name=PLANS[months]['name']),201
+    return jsonify(ok=True,vendor_id=vid,vendor_token=token,plan_months=months,amount=PLANS[months]['amount'],base_amount=PLANS[months]['base_amount'],gst_amount=PLANS[months]['gst_amount'],plan_name=PLANS[months]['name']),201
 
 def vendor_values(f,image):
     price=f.get('price_from'); unit=f.get('price_unit') if f.get('price_unit') in ('per_plate','per_day','per_event','onwards') else 'onwards'
     return (clean(f.get('name_en'),150),clean(f.get('name_te'),150) or None,int(f.get('category_id') or 1),int(f.get('city_id') or 1),clean(f.get('locality'),120),clean(f.get('description_en'),2000),clean(f.get('description_te'),2000),int(price) if price and price.isdigit() else None,unit,clean(f.get('phone'),20),clean(f.get('whatsapp'),20),clean(f.get('email'),120),image)
 
-# Razorpay: set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in deployment environment.
+# Razorpay credentials are read directly from the running process environment.
+# Add RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET to the Render web service environment.
+def get_razorpay_credentials():
+    key_id = (os.getenv('RAZORPAY_KEY_ID') or '').strip()
+    key_secret = (os.getenv('RAZORPAY_KEY_SECRET') or '').strip()
+    return key_id, key_secret
+
 def razorpay_client():
-    try: import razorpay
-    except ImportError: return None
-    if not Config.RAZORPAY_KEY_ID or not Config.RAZORPAY_KEY_SECRET: return None
-    return razorpay.Client(auth=(Config.RAZORPAY_KEY_ID,Config.RAZORPAY_KEY_SECRET))
+    try:
+        import razorpay
+    except ImportError:
+        app.logger.exception('Razorpay SDK is not installed.')
+        return None
+
+    key_id, key_secret = get_razorpay_credentials()
+    if not key_id or not key_secret:
+        app.logger.error('Razorpay credentials are missing from the service environment.')
+        return None
+
+    try:
+        return razorpay.Client(auth=(key_id, key_secret))
+    except Exception:
+        app.logger.exception('Unable to initialize Razorpay client.')
+        return None
 
 @app.post('/api/payment/order')
 def payment_order():
@@ -222,9 +255,10 @@ def payment_order():
     client=razorpay_client()
     if not client: return jsonify(error='Razorpay is not configured. Add RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET to the server environment.'),503
     plan=PLANS[months]
-    order=client.order.create({'amount':plan['amount'],'currency':'INR','receipt':f'sv-{vid}-{uuid.uuid4().hex[:10]}','notes':{'vendor_id':str(vid),'plan_months':str(months)}})
+    order=client.order.create({'amount':plan['amount'],'currency':'INR','receipt':f'sv-{vid}-{uuid.uuid4().hex[:10]}','notes':{'vendor_id':str(vid),'plan_months':str(months),'base_amount_paise':str(plan['base_amount']),'gst_amount_paise':str(plan['gst_amount']),'gst_rate':'18%'}})
     execute('INSERT INTO payments (vendor_id,plan_months,amount_paise,razorpay_order_id,status) VALUES (%s,%s,%s,%s,\'created\')',(vid,months,plan['amount'],order['id']))
-    return jsonify(order_id=order['id'],amount=plan['amount'],currency='INR',key_id=Config.RAZORPAY_KEY_ID,plan_name=plan['name'])
+    key_id, _ = get_razorpay_credentials()
+    return jsonify(order_id=order['id'],amount=plan['amount'],currency='INR',key_id=key_id,plan_name=plan['name'],base_amount=plan['base_amount'],gst_amount=plan['gst_amount'])
 
 @app.post('/api/payment/verify')
 def payment_verify():
@@ -255,7 +289,7 @@ def payment_verify():
 
 @app.post('/api/payment/webhook')
 def payment_webhook():
-    secret=Config.RAZORPAY_WEBHOOK_SECRET
+    secret=(os.getenv('RAZORPAY_WEBHOOK_SECRET') or '').strip()
     if not secret: return jsonify(error='Webhook secret is not configured'),503
     signature=request.headers.get('X-Razorpay-Signature','')
     expected=hmac.new(secret.encode(),request.get_data(),hashlib.sha256).hexdigest()
