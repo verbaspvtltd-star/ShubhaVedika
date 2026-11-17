@@ -1,5 +1,6 @@
 """ShubhaVedika bilingual Telugu wedding marketplace."""
 import os, uuid, functools, hashlib, hmac, json, secrets
+import certifi
 from datetime import datetime, timedelta
 import pymysql, pymysql.cursors
 from flask import Flask, g, jsonify, request, render_template, session, redirect, send_file, abort
@@ -35,6 +36,7 @@ PLANS = {
 
 
 
+
 def db():
     if 'db' not in g:
         g.db = pymysql.connect(
@@ -45,12 +47,7 @@ def db():
             database=Config.DB_NAME,
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor,
-            autocommit=True,
-
-            # Secure connection to TiDB Cloud
-            ssl_ca='/etc/ssl/certs/ca-certificates.crt',
-            ssl_verify_cert=True,
-            ssl_verify_identity=True
+            autocommit=True
         )
     return g.db
 
@@ -120,6 +117,32 @@ def expire_due_plans():
 def home(): return render_template('index.html', page='home')
 @app.route('/vendors')
 def vendors_page(): return render_template('vendors.html', page='vendors')
+
+@app.route('/about')
+def about_page(): return render_template('about.html', page='about')
+
+@app.get('/robots.txt')
+def robots_txt():
+    from flask import Response
+    body = 'User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\nDisallow: /vendor-dashboard\nDisallow: /vendor-login\nDisallow: /vendor-account-setup\nDisallow: /vendor-verification\nDisallow: /register-vendor\nSitemap: https://shubhavedika.com/sitemap.xml\n'
+    return Response(body, mimetype='text/plain')
+
+@app.get('/sitemap.xml')
+def sitemap_xml():
+    from flask import Response
+    from xml.sax.saxutils import escape
+    urls = [('/', '1.0', 'weekly'), ('/vendors', '0.9', 'daily'), ('/about', '0.5', 'monthly')]
+    try:
+        public_vendors = query("SELECT id FROM vendors WHERE status='active' AND plan_status='active' ORDER BY id DESC")
+        urls.extend((f"/vendor/{v['id']}", '0.7', 'weekly') for v in public_vendors)
+    except Exception:
+        pass
+    xml = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    for path, priority, freq in urls:
+        xml.append(f'<url><loc>{escape("https://shubhavedika.com" + path)}</loc><changefreq>{freq}</changefreq><priority>{priority}</priority></url>')
+    xml.append('</urlset>')
+    return Response('\n'.join(xml), mimetype='application/xml')
+
 @app.route('/vendor/<int:vid>')
 def vendor_page(vid): return render_template('vendor.html', page='vendor', vid=vid)
 @app.route('/register-vendor')

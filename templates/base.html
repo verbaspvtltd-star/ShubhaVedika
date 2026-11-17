@@ -3,7 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ShubhaVedika | Telugu States Wedding Marketplace · శుభ వేదిక</title>
+<title>{% block title %}ShubhaVedika | Telugu Wedding Vendors, Venues & Services{% endblock %}</title>
+<meta name="description" content="{% block meta_description %}Discover wedding venues, photographers, makeup artists, caterers and trusted wedding professionals across Andhra Pradesh and Telangana with ShubhaVedika.{% endblock %}">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<link rel="canonical" href="https://shubhavedika.com{{ request.path }}">
+<meta property="og:type" content="website"><meta property="og:site_name" content="ShubhaVedika">
+<meta property="og:title" content="{% block og_title %}ShubhaVedika | Telugu Wedding Marketplace{% endblock %}">
+<meta property="og:description" content="Discover trusted wedding venues and professionals across Andhra Pradesh and Telangana.">
+<meta property="og:url" content="https://shubhavedika.com{{ request.path }}">
+<meta property="og:image" content="https://shubhavedika.com/static/images/hero.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{{ {"@context":"https://schema.org","@type":"Organization","name":"ShubhaVedika","url":"https://shubhavedika.com/","logo":"https://shubhavedika.com/static/images/shubhavedika-logo.png","description":"A Telugu wedding marketplace connecting families with wedding venues and service professionals across Andhra Pradesh and Telangana.","parentOrganization":{"@type":"Organization","name":"Verbas Private Limited","url":"https://verbas.in/"}} | tojson }}</script>
 <meta name="description" content="Find wedding venues, photographers, makeup artists, caterers and more across Mana Telugu States (Andhra Pradesh and Telangana).">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,6 +28,7 @@
     <a href="/vendors?category=kalyana-mandapams" data-i18n="nav_venues">Venues</a>
     <a href="/vendors" data-i18n="nav_vendors">All Vendors</a>
     <a href="/#how" data-i18n="nav_how">How it works</a>
+    <a href="/about">About</a>
     <a href="/vendor-login">Vendor Login</a><a class="join" href="/register-vendor" data-i18n="nav_join">List your business</a>
     <span class="lang"><button class="lang-btn" data-l="en" onclick="setLang('en')">EN</button><button class="lang-btn" data-l="te" onclick="setLang('te')">తెలుగు</button></span>
   </nav>
@@ -27,7 +38,7 @@
 <footer class="foot">
   <div class="fgrid">
     <div><div class="logo light"><img class="brand-logo" src="/static/images/shubhavedika-logo.png" alt="ShubhaVedika lotus kalash logo"><span data-i18n="brand">ShubhaVedika</span></div><p data-i18n="footer_about"></p></div>
-    <div><h4 data-i18n="footer_links"></h4><a href="/vendors" data-i18n="nav_vendors"></a><a href="/register-vendor" data-i18n="nav_join"></a></div>
+    <div><h4 data-i18n="footer_links"></h4><a href="/vendors" data-i18n="nav_vendors"></a><a href="/about">About ShubhaVedika</a><a href="/register-vendor" data-i18n="nav_join"></a></div>
     <div><h4 data-i18n="footer_contact"></h4><p>For assistance, please use the enquiry options on the relevant vendor profile or contact the ShubhaVedika team.</p></div>
   </div>
   <p class="copy">© 2026 ShubhaVedika. <span data-i18n="rights"></span> · <a href="/admin/login">Admin</a></p>

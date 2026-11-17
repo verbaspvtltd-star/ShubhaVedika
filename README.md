@@ -64,3 +64,13 @@ Do not run the same `ALTER TABLE` twice.
   - https://www.pexels.com/photo/vibrant-indian-wedding-ceremony-with-floral-decor-38721881/
   - https://www.pexels.com/photo/elegant-outdoor-indian-wedding-mandap-decor-39797465/
 - Admin can remove vendors from the Vendors tab. Related payment, review and private-document records follow the existing database foreign-key cascade; enquiries are retained as unassigned records.
+
+
+## SEO routes
+- `/sitemap.xml` lists public pages and active vendor detail pages.
+- `/robots.txt` allows public discovery and excludes admin, API and account/setup paths.
+- `/about` describes ShubhaVedika and identifies Verbas Private Limited as its developer.
+- Keep the canonical domain, sitemap and robots URLs consistent if switching to a `www` hostname.
+
+## Secret handling
+Never commit `.env`, payment credentials, database credentials or private vendor verification documents. Store secrets only in Render environment variables. Rotate any real credentials that were included in a shared archive or repository.
