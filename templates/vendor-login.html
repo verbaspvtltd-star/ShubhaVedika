@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-page"><div class="auth-card">
+  <div class="auth-brand"><img src="/static/images/shubhavedika-logo.png" alt="ShubhaVedika"><span>SHUBHAVEDIKA · VENDOR</span></div>
+  <span class="eyebrow">WELCOME BACK</span><h1>Vendor login</h1><p class="muted">Sign in to manage your listing, subscription and verification status.</p>
+  <form id="vendorLoginForm" class="stack-form"><label>Mobile number or email<input name="identity" autocomplete="username" placeholder="Enter registered phone or email" required></label><label>Password<input name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required></label><button class="btn btn-large full">Login securely →</button></form>
+  <p class="login-prompt">New to ShubhaVedika? <a href="/register-vendor">Register your business</a></p>
+  <p class="small-center"><a href="/">← Back to website</a></p>
+</div></div>
+{% endblock %}

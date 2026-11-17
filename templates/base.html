@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ShubhaVedika | Telugu States Wedding Marketplace · శుభ వేదిక</title>
+<meta name="description" content="Find wedding venues, photographers, makeup artists, caterers and more across Mana Telugu States (Andhra Pradesh and Telangana).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+</head>
+<body data-page="{{ page }}" data-vid="{{ vid|default('') }}">
+<header class="top">
+  <a class="logo" href="/"><img class="brand-logo" src="/static/images/shubhavedika-logo.png" alt="ShubhaVedika lotus kalash logo"><span data-i18n="brand">ShubhaVedika</span></a>
+  <nav id="nav">
+    <a href="/vendors?category=kalyana-mandapams" data-i18n="nav_venues">Venues</a>
+    <a href="/vendors" data-i18n="nav_vendors">All Vendors</a>
+    <a href="/#how" data-i18n="nav_how">How it works</a>
+    <a href="/vendor-login">Vendor Login</a><a class="join" href="/register-vendor" data-i18n="nav_join">List your business</a>
+    <span class="lang"><button class="lang-btn" data-l="en" onclick="setLang('en')">EN</button><button class="lang-btn" data-l="te" onclick="setLang('te')">తెలుగు</button></span>
+  </nav>
+  <button id="burger" aria-label="menu">☰</button>
+</header>
+<main>{% block content %}{% endblock %}</main>
+<footer class="foot">
+  <div class="fgrid">
+    <div><div class="logo light"><img class="brand-logo" src="/static/images/shubhavedika-logo.png" alt="ShubhaVedika lotus kalash logo"><span data-i18n="brand">ShubhaVedika</span></div><p data-i18n="footer_about"></p></div>
+    <div><h4 data-i18n="footer_links"></h4><a href="/vendors" data-i18n="nav_vendors"></a><a href="/register-vendor" data-i18n="nav_join"></a></div>
+    <div><h4 data-i18n="footer_contact"></h4><p>For assistance, please use the enquiry options on the relevant vendor profile or contact the ShubhaVedika team.</p></div>
+  </div>
+  <p class="copy">© 2026 ShubhaVedika. <span data-i18n="rights"></span> · <a href="/admin/login">Admin</a></p>
+</footer>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="/static/js/i18n.js"></script>
+<script src="/static/js/main.js"></script>
+</body></html>

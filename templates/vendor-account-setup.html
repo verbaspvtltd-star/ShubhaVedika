@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-page"><div class="auth-card">
+  <div class="auth-brand"><img src="/static/images/shubhavedika-logo.png" alt="ShubhaVedika"><span>SHUBHAVEDIKA · VENDOR</span></div>
+  <div class="step-track compact"><span class="done">01 <b>Details</b></span><i></i><span class="done">02 <b>Payment</b></span><i></i><span class="done">03 <b>Document</b></span><i></i><span class="active">04 <b>Password</b></span></div>
+  <span class="eyebrow">FINAL STEP</span><h1>Create your vendor login</h1><p class="muted">Use this mobile number or email and your password whenever you return to ShubhaVedika.</p>
+  <div class="identity-summary"><small>YOUR LOGIN ID</small><b id="setupIdentity">Loading…</b></div>
+  <form id="passwordForm" class="stack-form"><label>Create password<input name="password" type="password" minlength="8" autocomplete="new-password" placeholder="At least 8 characters" required></label><label>Confirm password<input name="confirm" type="password" minlength="8" autocomplete="new-password" placeholder="Enter password again" required></label><button class="btn btn-large full">Save password & open dashboard →</button></form>
+  <p class="muted small-center">Keep your password private. ShubhaVedika team will never ask you to share it.</p>
+</div></div>
+{% endblock %}

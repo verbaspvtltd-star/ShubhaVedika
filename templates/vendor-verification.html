@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-page"><div class="auth-card wide-card">
+  <div class="auth-brand"><img src="/static/images/shubhavedika-logo.png" alt="ShubhaVedika"><span>SHUBHAVEDIKA · VENDOR</span></div>
+  <div class="step-track compact"><span class="done">01 <b>Details</b></span><i></i><span class="done">02 <b>Payment</b></span><i></i><span class="active">03 <b>Document</b></span><i></i><span>04 <b>Password</b></span></div>
+  <span class="eyebrow">STEP 3 OF 4</span><h1>Upload your Aadhaar document</h1>
+  <p class="muted">Please upload a clear photo or PDF of your Aadhaar card. You do not need to create a ZIP file or enter a code.</p>
+  <form id="aadhaarForm" class="upload-form">
+    <label class="upload-drop" for="aadhaarFile"><span class="upload-symbol">↑</span><b>Choose Aadhaar photo or PDF</b><small>JPG, PNG, WEBP or PDF · Maximum 12 MB</small><input id="aadhaarFile" name="aadhaar_document" type="file" accept=".jpg,.jpeg,.png,.webp,.pdf,application/pdf,image/jpeg,image/png,image/webp" required></label>
+    <div id="fileChosen" class="file-chosen" hidden></div>
+    <label class="consent-check"><input type="checkbox" name="consent" required><span>I consent to ShubhaVedika securely using this document only for vendor identity review. I understand that uploading a document does not by itself prove its authenticity.</span></label>
+    <button class="btn btn-large full" type="submit">Submit document securely →</button>
+  </form>
+  <div class="privacy-callout">🔐 <b>Your document is private.</b> It is not displayed on your public listing. Only authorised administrators can access it for review.</div>
+</div></div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero"><div class="hero-in">
+  <h1 data-i18n="hero_title"></h1><p data-i18n="hero_sub"></p>
+  <form id="heroForm" class="searchbar">
+    <select id="hCity"></select><select id="hCat"></select>
+    <input id="hQ" data-i18n-ph="search_ph">
+    <button class="btn" data-i18n="search"></button>
+  </form>
+</div></section>
+<section class="wrap"><h2 class="sec" data-i18n="popular"></h2><div id="popular" class="pops"></div></section>
+<section class="wrap"><h2 class="sec" data-i18n="categories"></h2><div id="cats" class="cats"></div></section>
+<section class="wrap"><h2 class="sec" data-i18n="featured"></h2><div id="featured" class="grid"></div></section>
+<section class="wrap" id="how"><h2 class="sec" data-i18n="how_title"></h2>
+  <div class="steps">
+    <div><i>1</i><h3 data-i18n="s1_t"></h3><p data-i18n="s1_d"></p></div>
+    <div><i>2</i><h3 data-i18n="s2_t"></h3><p data-i18n="s2_d"></p></div>
+    <div><i>3</i><h3 data-i18n="s3_t"></h3><p data-i18n="s3_d"></p></div>
+  </div></section>
+<section class="wrap"><h2 class="sec" data-i18n="cities"></h2><p class="muted" data-i18n="map_hint"></p><div class="map-search"><input id="citySearch" placeholder="Search a city or town…" data-i18n-ph="city_search"></div><div id="cityMap" class="city-map" role="application" aria-label="Telugu states vendor map"></div><div id="mapResults" class="grid" hidden></div></section>
+<section class="cta"><h2 data-i18n="cta_title"></h2><p data-i18n="cta_sub"></p><a class="btn gold" href="/register-vendor" data-i18n="cta_btn"></a></section>
+{% endblock %}

@@ -1,0 +1,14 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Login | ShubhaVedika</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&family=Noto+Sans+Telugu:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/admin.css"></head>
+<body class="loginbody"><form id="f" class="logincard">
+<div class="alogo"><img src="/static/images/shubhavedika-logo.png" alt="ShubhaVedika logo"><span>ShubhaVedika</span></div><p>Admin Panel</p>
+<input name="username" placeholder="Username" required autofocus>
+<input name="password" type="password" placeholder="Password" required>
+<div id="err" class="err"></div><button>Sign in</button></form>
+<script>
+f.onsubmit=async e=>{e.preventDefault();const r=await fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.fromEntries(new FormData(f)))});
+if(r.ok)location.href='/admin';else err.textContent=(await r.json()).error;}
+</script></body></html>

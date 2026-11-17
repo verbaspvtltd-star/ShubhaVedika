@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="wrap listing">
+  <aside class="box filters"><h3 data-i18n="filters"></h3>
+    <form id="filterForm">
+      <input id="fQ" data-i18n-ph="search_ph">
+      <label class="lbl" data-i18n="city"></label><select id="fCity"></select>
+      <label class="lbl" data-i18n="category"></label><select id="fCat"></select>
+      <label class="lbl" data-i18n="budget"></label>
+      <div class="two"><input id="fMin" type="number" min="0" data-i18n-ph="min"><input id="fMax" type="number" min="0" data-i18n-ph="max"></div>
+      <button class="btn full" data-i18n="apply"></button>
+      <button type="button" id="fReset" class="link" data-i18n="reset"></button>
+    </form></aside>
+  <section>
+    <div class="bar"><b id="count"></b>
+      <select id="fSort"><option value="" data-i18n="s_rating"></option><option value="new" data-i18n="s_new"></option>
+      <option value="price_asc" data-i18n="s_pl"></option><option value="price_desc" data-i18n="s_ph"></option></select></div>
+    <div id="list" class="grid two-col"></div>
+    <div class="center"><button id="more" class="btn ghost" style="display:none" data-i18n="load_more"></button></div>
+  </section>
+</div>
+{% endblock %}

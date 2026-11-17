@@ -1,0 +1,5 @@
+.env
+venv/
+__pycache__/
+instance/private_vendor_proofs/*
+!instance/private_vendor_proofs/.gitkeep

@@ -1,0 +1,14 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin | ShubhaVedika</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&family=Noto+Sans+Telugu:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/admin.css"></head>
+<body><div class="shell">
+<aside class="side"><div class="alogo"><img src="/static/images/shubhavedika-logo.png" alt="ShubhaVedika logo"><span>ShubhaVedika</span></div>
+<a data-tab="dashboard" class="on">📊 Dashboard</a><a data-tab="vendors">🏪 Vendors</a><a data-tab="verification">🔐 Verification</a><a data-tab="enquiries">📨 Enquiries <i id="bEnq"></i></a>
+<a data-tab="reviews">⭐ Reviews <i id="bRev"></i></a><a data-tab="cities">📍 Cities</a><a data-tab="categories">🗂️ Categories</a>
+<a href="/" target="_blank" class="muted">↗ View site</a><a id="logout" class="muted">⎋ Logout</a></aside>
+<main><header><h1 id="title">Dashboard</h1><div id="actions"></div></header><div id="view"></div></main></div>
+<div id="modal" class="modal"><div class="mbox"><button class="x" onclick="closeModal()">×</button><div id="mcontent"></div></div></div>
+<script src="/static/js/admin.js"></script></body></html>
