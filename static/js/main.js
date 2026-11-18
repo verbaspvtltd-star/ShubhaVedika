@@ -185,6 +185,70 @@ async function initRegister() {
   const meta=await loadMeta();
   $("#rCat").innerHTML=meta.categories.map(c=>`<option value="${c.id}">${esc(pick(c,"name"))}</option>`).join("");
   $("#rCity").innerHTML=meta.cities.map(c=>`<option value="${c.id}">${esc(pick(c,"name"))}</option>`).join("");
+
+  // Automatically translate the English business details into their Telugu fields.
+  // Users can still edit the Telugu fields manually after the translation appears.
+  const autoTranslateToTelugu = (source, target) => {
+    if (!source || !target) return;
+    let timer;
+    let requestId = 0;
+    const status = document.createElement("small");
+    status.className = "muted translation-status";
+    status.setAttribute("aria-live", "polite");
+    target.closest("label")?.appendChild(status);
+
+    target.addEventListener("input", () => {
+      target.dataset.manuallyEdited = "true";
+    });
+
+    const translate = () => {
+      clearTimeout(timer);
+      target.dataset.manuallyEdited = "false";
+      const original = source.value.trim();
+      const thisRequest = ++requestId;
+      if (!original) {
+        target.value = "";
+        status.textContent = "";
+        return;
+      }
+      // Do not send text that already contains Telugu characters for translation.
+      if (/[\\u0C00-\\u0C7F]/.test(original)) {
+        target.value = original;
+        status.textContent = "";
+        return;
+      }
+      status.textContent = "తెలుగులోకి మారుస్తోంది…";
+      timer = setTimeout(async () => {
+        try {
+          const url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=te&dt=t&q=" + encodeURIComponent(original);
+          const response = await fetch(url);
+          if (!response.ok) throw new Error("Translation service unavailable");
+          const data = await response.json();
+          const translated = Array.isArray(data?.[0])
+            ? data[0].map(part => part?.[0] || "").join("")
+            : "";
+          if (thisRequest !== requestId || !translated) return;
+          if (target.dataset.manuallyEdited !== "true") {
+            target.value = translated;
+            target.dispatchEvent(new Event("input", { bubbles: true }));
+            target.dataset.manuallyEdited = "false";
+          }
+          status.textContent = "✓ తెలుగు అనువాదం పూర్తయింది";
+        } catch (error) {
+          if (thisRequest === requestId) {
+            status.textContent = "ఆటో అనువాదం అందుబాటులో లేదు. తెలుగు వివరాలను మాన్యువల్‌గా నమోదు చేయండి.";
+          }
+        }
+      }, 500);
+    };
+
+    source.addEventListener("input", translate);
+    source.addEventListener("paste", () => setTimeout(translate, 0));
+  };
+
+  autoTranslateToTelugu($("#regForm [name='name_en']"), $("#regForm [name='name_te']"));
+  autoTranslateToTelugu($("#regForm [name='description_en']"), $("#regForm [name='description_te']"));
+
   $("#regForm").onsubmit=async e=>{
     e.preventDefault();
     const btn=e.target.querySelector('button[type="submit"]');
