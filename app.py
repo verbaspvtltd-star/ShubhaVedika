@@ -131,11 +131,13 @@ def vendors_page(): return render_template('vendors.html', page='vendors')
 @app.route('/about')
 def about_page(): return render_template('about.html', page='about')
 
+
 @app.get('/robots.txt')
 def robots_txt():
     from flask import Response
-    body = 'User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\nDisallow: /vendor-dashboard\nDisallow: /vendor-login\nDisallow: /vendor-account-setup\nDisallow: /vendor-verification\nDisallow: /register-vendor\nSitemap: https://shubhavedika.com/sitemap.xml\n'
+    body = 'User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\nDisallow: /vendor-dashboard\nDisallow: /vendor-login\nDisallow: /vendor-account-setup\nDisallow: /vendor-verification\nSitemap: https://shubhavedika.com/sitemap.xml\n'
     return Response(body, mimetype='text/plain')
+
 
 @app.get('/sitemap.xml')
 def sitemap_xml():
