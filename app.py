@@ -412,11 +412,16 @@ def vendor_upload_aadhaar():
 # Admin endpoints
 @app.post('/api/admin/login')
 def admin_login():
-    d=request.get_json(silent=True) or {}; u=query('SELECT * FROM admins WHERE username=%s',(clean(d.get('username'),60),),one=True)
-    if not u:
-        ensure_admin(); u=query('SELECT * FROM admins WHERE username=%s',(clean(d.get('username'),60),),one=True)
+    # Sync the configured Render admin credentials into the existing admin row
+    # before checking the login. This updates only the configured admin account.
+    ensure_admin()
+    d=request.get_json(silent=True) or {}
+    username=clean(d.get('username'),60)
+    u=query('SELECT * FROM admins WHERE username=%s',(username,),one=True)
     if u and check_password_hash(u['password_hash'],d.get('password','')):
-        session.clear(); session['admin']=u['username']; return jsonify(ok=True)
+        session.clear()
+        session['admin']=u['username']
+        return jsonify(ok=True)
     return jsonify(error='Invalid username or password'),401
 @app.post('/api/admin/logout')
 def admin_logout(): session.clear(); return jsonify(ok=True)
@@ -511,12 +516,31 @@ def admin_del_simple(table,i):
 
 def ensure_admin():
     with app.app_context():
-        if not Config.ADMIN_USERNAME or not Config.ADMIN_PASSWORD:
-            print('[setup] ADMIN_USERNAME and ADMIN_PASSWORD must be set before creating the first admin')
+        username = (Config.ADMIN_USERNAME or '').strip()
+        password = Config.ADMIN_PASSWORD or ''
+        if not username or not password:
+            app.logger.error('ADMIN_USERNAME and ADMIN_PASSWORD must be set in the service environment.')
             return
-        if not query('SELECT id FROM admins LIMIT 1',one=True):
-            execute('INSERT INTO admins (username,password_hash) VALUES (%s,%s)',(Config.ADMIN_USERNAME,generate_password_hash(Config.ADMIN_PASSWORD)))
-            print('[setup] Admin created from environment credentials')
+
+        existing = query(
+            'SELECT id FROM admins WHERE username=%s LIMIT 1',
+            (username,),
+            one=True
+        )
+        password_hash = generate_password_hash(password)
+
+        if existing:
+            execute(
+                'UPDATE admins SET password_hash=%s WHERE id=%s',
+                (password_hash, existing['id'])
+            )
+            app.logger.info('Configured admin password hash synchronized.')
+        else:
+            execute(
+                'INSERT INTO admins (username,password_hash) VALUES (%s,%s)',
+                (username, password_hash)
+            )
+            app.logger.info('Admin account created from environment credentials.')
 
 if __name__=='__main__':
     ensure_admin(); app.run(debug=False,port=5000)
