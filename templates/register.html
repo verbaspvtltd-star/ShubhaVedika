@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 {% block content %}
 <section class="auth-hero">
@@ -5,45 +6,201 @@
     <span class="eyebrow">JOIN SHUBHAVEDIKA</span>
     <h1>Bring your wedding business to the right audience.</h1>
     <p>Create your vendor listing in a few simple steps. First tell us about your business and choose a plan. You will pay securely in the next step.</p>
-    <div class="trust-points"><span>✓ Simple registration</span><span>✓ Secure payment</span><span>✓ Private document review</span></div>
+    <div class="trust-points">
+      <span>✓ Simple registration</span>
+      <span>✓ Secure payment</span>
+      <span>✓ Private document review</span>
+    </div>
   </div>
 </section>
+
 <div class="wrap register-wrap">
-  <div class="step-track"><span class="active">01 <b>Business details</b></span><i></i><span>02 <b>Payment</b></span><i></i><span>03 <b>Aadhaar upload</b></span><i></i><span>04 <b>Account setup</b></span></div>
+
+  <div class="step-track">
+    <span class="active">01 <b>Business details</b></span>
+    <i></i>
+    <span>02 <b>Payment</b></span>
+    <i></i>
+    <span>03 <b>Aadhaar upload</b></span>
+    <i></i>
+    <span>04 <b>Account setup</b></span>
+  </div>
+
   <div class="register-layout">
+
     <form id="regForm" class="box formgrid premium-form" enctype="multipart/form-data">
-      <div class="span2 form-heading"><span class="eyebrow">STEP 1 OF 4</span><h2>Tell us about your business</h2><p class="muted">Fields marked * are required.</p></div>
-      <label><span>Business / Vendor name *</span><input name="name_en" required maxlength="150" placeholder="e.g. Ramesh Photography"></label>
-      <label><span>Business name in Telugu</span><input name="name_te" maxlength="150" placeholder="మీ వ్యాపారం పేరు"></label>
-      <label><span>Service category *</span><select name="category_id" id="rCat" required></select></label>
-      <label><span>City *</span><select name="city_id" id="rCity" required></select></label>
-      <label><span>Area / Locality</span><input name="locality" placeholder="e.g. Tanuku"></label>
-      <label><span>Mobile number *</span><input name="phone" type="tel" required pattern="[0-9+ ]{10,15}" placeholder="+91 98765 43210"></label>
-      <label><span>WhatsApp number</span><input name="whatsapp" type="tel" pattern="[0-9+ ]{10,15}" placeholder="If different from mobile"></label>
-      <label><span>Email address</span><input name="email" type="email" placeholder="you@example.com"></label>
-      <label><span>Starting price (₹)</span><input name="price_from" type="number" min="0" placeholder="e.g. 15000"></label>
-      <label><span>Price type</span><select name="price_unit"><option value="onwards">Starting from</option><option value="per_plate">Per plate</option><option value="per_day">Per day</option><option value="per_event">Per event</option></select></label>
-      <label class="span2"><span>About your business</span><textarea name="description_en" rows="3" placeholder="Tell customers what makes your service special"></textarea></label>
-      <label class="span2"><span>About your business in Telugu</span><textarea name="description_te" rows="3" placeholder="మీ సేవల గురించి వివరించండి"></textarea></label>
-      <label class="span2"><span>Business / portfolio cover photo</span><input name="image" type="file" accept="image/jpeg,image/png,image/webp"></label>
-      <div class="span2 plan-section"><span class="eyebrow">STEP 2 · CHOOSE A PLAN</span><h2>Pick the listing duration</h2><p class="muted">All displayed totals include 18% GST.</p><p class="muted">Your listing will be published only after document review and approval.</p>
+
+      <div class="span2 form-heading">
+        <span class="eyebrow">STEP 1 OF 4</span>
+        <h2>Tell us about your business</h2>
+        <p class="muted">Fields marked * are required.</p>
+      </div>
+
+      <label>
+        <span>Business / Vendor name *</span>
+        <input name="name_en" required maxlength="150" placeholder="e.g. Ramesh Photography">
+      </label>
+
+      <label>
+        <span>Business name in Telugu</span>
+        <input name="name_te" maxlength="150" placeholder="మీ వ్యాపారం పేరు">
+      </label>
+
+      <label>
+        <span>Service category *</span>
+        <select name="category_id" id="rCat" required></select>
+      </label>
+
+      <label>
+        <span>City *</span>
+        <select name="city_id" id="rCity" required></select>
+      </label>
+
+      <label>
+        <span>Area / Locality</span>
+        <input name="locality" placeholder="e.g. Tanuku">
+      </label>
+
+      <label>
+        <span>Mobile number *</span>
+        <input name="phone" type="tel" required pattern="[0-9+ ]{10,15}" placeholder="+91 98765 43210">
+      </label>
+
+      <label>
+        <span>WhatsApp number</span>
+        <input name="whatsapp" type="tel" pattern="[0-9+ ]{10,15}" placeholder="If different from mobile">
+      </label>
+
+      <label>
+        <span>Email address</span>
+        <input name="email" type="email" placeholder="you@example.com">
+      </label>
+
+      <label>
+        <span>Starting price (₹)</span>
+        <input name="price_from" type="number" min="0" placeholder="e.g. 15000">
+      </label>
+
+      <label>
+        <span>Price type</span>
+        <select name="price_unit">
+          <option value="onwards">Starting from</option>
+          <option value="per_plate">Per plate</option>
+          <option value="per_day">Per day</option>
+          <option value="per_event">Per event</option>
+        </select>
+      </label>
+
+      <label class="span2">
+        <span>About your business</span>
+        <textarea name="description_en" rows="3" placeholder="Tell customers what makes your service special"></textarea>
+      </label>
+
+      <label class="span2">
+        <span>About your business in Telugu</span>
+        <textarea name="description_te" rows="3" placeholder="మీ సేవల గురించి వివరించండి"></textarea>
+      </label>
+
+      <label class="span2">
+        <span>Business / portfolio cover photo</span>
+        <input name="image" type="file" accept="image/jpeg,image/png,image/webp">
+      </label>
+
+      <!-- PLAN SELECTION -->
+      <div class="span2 plan-section">
+
+        <span class="eyebrow">STEP 2 · CHOOSE A PLAN</span>
+
+        <h2>Pick the listing duration</h2>
+
+        <p class="muted">
+          Plan prices are displayed before GST. An additional 18% GST applies to all plans.
+        </p>
+
+        <p class="muted">
+          Your listing will be published only after document review and approval.
+        </p>
+
         <div class="plan-grid">
-          <label class="plan"><input type="radio" name="plan_months" value="1" required><span>Starter</span><b>1 Month</b><strong>₹392.94</strong><small>₹333 + ₹59.94 GST (18%)</small></label>
-          <label class="plan"><input type="radio" name="plan_months" value="3"><span>Popular</span><b>3 Months</b><strong>₹785.88</strong><small>₹666 + ₹119.88 GST (18%)</small></label>
-          <label class="plan featured-plan"><input type="radio" name="plan_months" value="6"><span>Best value</span><b>6 Months</b><strong>₹1,178.82</strong><small>₹999 + ₹179.82 GST (18%)</small></label>
-          <label class="plan"><input type="radio" name="plan_months" value="12"><span>Long term</span><b>12 Months</b><strong>₹2,240.82</strong><small>₹1,899 + ₹341.82 GST (18%)</small></label>
+
+          <!-- 1 MONTH -->
+          <label class="plan">
+            <input type="radio" name="plan_months" value="1" required>
+            <span>Starter</span>
+            <b>1 Month</b>
+            <strong>₹333</strong>
+            <small>₹333 + 18% GST</small>
+          </label>
+
+          <!-- 3 MONTHS -->
+          <label class="plan">
+            <input type="radio" name="plan_months" value="3">
+            <span>Popular</span>
+            <b>3 Months</b>
+            <strong>₹666</strong>
+            <small>₹666 + 18% GST</small>
+          </label>
+
+          <!-- 6 MONTHS -->
+          <label class="plan featured-plan">
+            <input type="radio" name="plan_months" value="6">
+            <span>Best value</span>
+            <b>6 Months</b>
+            <strong>₹999</strong>
+            <small>₹999 + 18% GST</small>
+          </label>
+
+          <!-- 12 MONTHS -->
+          <label class="plan">
+            <input type="radio" name="plan_months" value="12">
+            <span>Long term</span>
+            <b>12 Months</b>
+            <strong>₹1,899</strong>
+            <small>₹1,899 + 18% GST</small>
+          </label>
+
         </div>
       </div>
-      <div class="span2 consent-note"><span class="note-icon">🔒</span><p>Your Aadhaar document will be requested only after successful payment. It will be stored privately for verification and will not appear on your public vendor profile.</p></div>
-      <button class="btn span2 btn-large" type="submit">Continue to secure payment <span>→</span></button>
-      <p class="span2 login-prompt">Already registered? <a href="/vendor-login">Vendor login</a></p>
+
+      <div class="span2 consent-note">
+        <span class="note-icon">🔒</span>
+        <p>
+          Your Aadhaar document will be requested only after successful payment.
+          It will be stored privately for verification and will not appear on your public vendor profile.
+        </p>
+      </div>
+
+      <button class="btn span2 btn-large" type="submit">
+        Continue to secure payment <span>→</span>
+      </button>
+
+      <p class="span2 login-prompt">
+        Already registered? <a href="/vendor-login">Vendor login</a>
+      </p>
+
     </form>
+
     <aside class="register-aside">
+
       <img src="/static/images/shubhavedika-logo.png" alt="ShubhaVedika logo">
-      <h3>A trusted place for every celebration.</h3><p>Connect with families looking for wedding services across Andhra Pradesh and Telangana.</p>
-      <div class="aside-line">✦ Your business, beautifully presented</div><div class="aside-line">✦ Secure payment through Razorpay</div><div class="aside-line">✦ Human review before the verified badge</div>
+
+      <h3>A trusted place for every celebration.</h3>
+
+      <p>
+        Connect with families looking for wedding services across Andhra Pradesh and Telangana.
+      </p>
+
+      <div class="aside-line">✦ Your business, beautifully presented</div>
+
+      <div class="aside-line">✦ Secure payment through Razorpay</div>
+
+      <div class="aside-line">✦ Human review before the verified badge</div>
+
     </aside>
+
   </div>
+
   <div id="regResult" class="box" hidden></div>
+
 </div>
 {% endblock %}
