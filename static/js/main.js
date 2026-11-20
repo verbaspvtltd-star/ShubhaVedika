@@ -173,15 +173,78 @@ async function initVendor(id) {
   };
 }
 
+async function confirmVendorPayment(vendorId, token, response) {
+  // Keep the Razorpay success proof locally until the server confirms it.
+  localStorage.setItem("sv_pending_payment", JSON.stringify({vendor_id:String(vendorId), response}));
+  await post("/api/payment/verify", {
+    vendor_id:vendorId, vendor_token:token,
+    razorpay_order_id:response.razorpay_order_id,
+    razorpay_payment_id:response.razorpay_payment_id,
+    razorpay_signature:response.razorpay_signature
+  });
+  localStorage.setItem("sv_paid_next_step", JSON.stringify({vendor_id:String(vendorId), order_id:response.razorpay_order_id}));
+  localStorage.removeItem("sv_pending_payment");
+  localStorage.removeItem("sv_payment_in_progress");
+  location.href="/vendor-verification";
+}
+
+async function recoverVendorPayment() {
+  const token=localStorage.getItem("sv_vendor_token");
+  const vendorId=localStorage.getItem("sv_vendor_id");
+  if(!token || !vendorId) return false;
+  const pending=JSON.parse(localStorage.getItem("sv_pending_payment")||"null");
+  const inProgress=JSON.parse(localStorage.getItem("sv_payment_in_progress")||"null");
+  const completed=JSON.parse(localStorage.getItem("sv_paid_next_step")||"null");
+  // Never redirect based on an old paid subscription. Recovery is scoped to
+  // the exact order initiated in this browser session.
+  const recovery=(pending && String(pending.vendor_id)===String(vendorId)) ? pending :
+    ((completed && String(completed.vendor_id)===String(vendorId)) ? completed :
+    ((inProgress && String(inProgress.vendor_id)===String(vendorId)) ? inProgress : null));
+  if(!recovery || !recovery.order_id && !recovery.response?.razorpay_order_id) return false;
+  const orderId=recovery.order_id || recovery.response.razorpay_order_id;
+  try {
+    const status=await api("/api/vendor/payment-status",{
+      method:"POST",headers:{"Content-Type":"application/json","X-Vendor-Token":token},
+      body:JSON.stringify({order_id:orderId})
+    });
+    if(status.paid) {
+      localStorage.setItem("sv_paid_next_step",JSON.stringify({vendor_id:String(vendorId),order_id:orderId}));
+      localStorage.removeItem("sv_pending_payment");
+      localStorage.removeItem("sv_payment_in_progress");
+      location.replace("/vendor-verification");
+      return true;
+    }
+    if(pending && String(pending.vendor_id)===String(vendorId)) {
+      await confirmVendorPayment(vendorId,token,pending.response);
+      return true;
+    }
+  } catch(err) {
+    const note=document.querySelector("#paymentRecoveryNote");
+    if(note) note.textContent="Checking your payment securely… Please keep this page open. Do not pay again while confirmation is pending.";
+  }
+  return false;
+}
+
 async function startVendorPayment(vendorId,token,months,prefill={}){
   const order=await post("/api/payment/order",{vendor_id:vendorId,vendor_token:token,plan_months:Number(months)});
+  localStorage.setItem("sv_payment_in_progress",JSON.stringify({vendor_id:String(vendorId),order_id:order.order_id}));
   if(!window.Razorpay)throw new Error("Razorpay checkout could not be loaded. Please refresh and try again.");
   const rz=new Razorpay({key:order.key_id,amount:order.amount,currency:order.currency,name:"ShubhaVedika",description:order.plan_name+" vendor listing",order_id:order.order_id,prefill,theme:{color:"#174477"},
-    handler:async response=>{try{await post("/api/payment/verify",{vendor_id:vendorId,vendor_token:token,razorpay_order_id:response.razorpay_order_id,razorpay_payment_id:response.razorpay_payment_id,razorpay_signature:response.razorpay_signature});location.href="/vendor-verification";}catch(err){toast(err.message,true);}},
-    modal:{ondismiss:()=>toast("Payment was not completed. You can try again from your vendor dashboard.",true)}});rz.open();
+    handler:async response=>{try{await confirmVendorPayment(vendorId,token,response);}catch(err){toast("Payment was received. We are waiting for a secure confirmation; do not pay again. Keep this page open or refresh when the internet returns.",true);}},
+    modal:{ondismiss:()=>{localStorage.removeItem("sv_payment_in_progress");toast("Payment was not completed. You can try again from your vendor dashboard.",true);}}});rz.open();
 }
 
 async function initRegister() {
+  // If payment succeeded but the connection dropped during confirmation,
+  // recover the saved payment and continue to Aadhaar instead of restarting.
+  const recovered=await recoverVendorPayment();
+  if(recovered) return;
+  if(localStorage.getItem("sv_pending_payment") || localStorage.getItem("sv_payment_in_progress") || localStorage.getItem("sv_paid_next_step")) {
+    const note=document.querySelector("#paymentRecoveryNote");
+    if(note) note.textContent="Checking your payment securely… Please do not pay again. This page will stay here until confirmation.";
+    window.addEventListener("online", recoverVendorPayment);
+    setInterval(recoverVendorPayment, 5000);
+  }
   const meta=await loadMeta();
   $("#rCat").innerHTML=meta.categories.map(c=>`<option value="${c.id}">${esc(pick(c,"name"))}</option>`).join("");
   $("#rCity").innerHTML=meta.cities.map(c=>`<option value="${c.id}">${esc(pick(c,"name"))}</option>`).join("");
@@ -281,6 +344,7 @@ async function initVendorVerification(){
     try{
       const fd=new FormData();fd.append("aadhaar_document",file.files[0]);fd.append("consent",e.target.consent.checked?"yes":"");
       await api("/api/vendor/upload-aadhaar",{method:"POST",body:fd,headers:{"X-Vendor-Token":token}});
+      localStorage.removeItem("sv_paid_next_step");
       location.href="/vendor-account-setup";
     }catch(err){toast(err.message,true);}
     finally{if(btn){btn.disabled=false;btn.textContent="Submit document securely →";}}

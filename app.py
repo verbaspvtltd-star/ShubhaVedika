@@ -295,6 +295,18 @@ def payment_order():
     key_id, _ = get_razorpay_credentials()
     return jsonify(order_id=order['id'],amount=plan['amount'],currency='INR',key_id=key_id,plan_name=plan['name'],base_amount=plan['base_amount'],gst_amount=plan['gst_amount'])
 
+@app.post('/api/vendor/payment-status')
+def vendor_payment_status():
+    v=vendor_from_token(request.headers.get('X-Vendor-Token',''))
+    if not v:
+        return jsonify(error='Registration session expired.'),401
+    d=request.get_json(silent=True) or {}
+    order_id=clean(d.get('order_id'),100)
+    if not order_id:
+        return jsonify(error='Payment order reference is required.'),400
+    payment=query("SELECT id,plan_months,paid_at FROM payments WHERE vendor_id=%s AND razorpay_order_id=%s AND status='paid'",(v['id'],order_id),one=True)
+    return jsonify(paid=bool(payment),next_step='aadhaar' if payment else 'payment')
+
 @app.post('/api/payment/verify')
 def payment_verify():
     d=request.get_json(silent=True) or {}; vid=int(d.get('vendor_id') or 0); token=clean(d.get('vendor_token'),120)
